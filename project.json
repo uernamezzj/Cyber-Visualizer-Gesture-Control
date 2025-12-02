@@ -1,6 +1,6 @@
 {
 	"contentrating" : "Everyone",
-	"description" : "打开视频可以通过手势控制颗粒缩放（先将音乐灵敏度调低看效果）\n\n[UPDATE] 新增色彩模式：赛博朋克、彩虹、渐变等",
+	"description" : "最终版本 V10\n\n[手势控制]\n1. 挥手：切换场景\n2. 捏合(Pinch)：暂停自转，跟随手势旋转视角\n3. 张开手：与粒子互动/缩放\n\n[新增]\n自定义手势灵敏度调节，更丝滑的体验。",
 	"file" : "main.html",
 	"general" : 
 	{
@@ -9,10 +9,10 @@
 			"audio_pos_x" : 
 			{
 				"condition" : "show_hud.value",
-				"index" : 24,
+				"index" : 31,
 				"max" : 100,
 				"min" : 0,
-				"order" : 124,
+				"order" : 131,
 				"precision" : 1,
 				"step" : 0.5,
 				"text" : "音频面板 X轴",
@@ -22,10 +22,10 @@
 			"audio_pos_y" : 
 			{
 				"condition" : "show_hud.value",
-				"index" : 25,
+				"index" : 32,
 				"max" : 100,
 				"min" : 0,
-				"order" : 125,
+				"order" : 132,
 				"precision" : 1,
 				"step" : 0.5,
 				"text" : "音频面板 Y轴",
@@ -35,10 +35,10 @@
 			"audio_scale" : 
 			{
 				"condition" : "show_hud.value",
-				"index" : 26,
+				"index" : 33,
 				"max" : 3,
 				"min" : 0.5,
-				"order" : 126,
+				"order" : 133,
 				"precision" : 2,
 				"step" : 0.1,
 				"text" : "音频面板 大小",
@@ -47,10 +47,10 @@
 			},
 			"audio_sensitivity" : 
 			{
-				"index" : 6,
+				"index" : 12,
 				"max" : 5,
 				"min" : 0.1,
-				"order" : 106,
+				"order" : 112,
 				"precision" : 2,
 				"step" : 0.1,
 				"text" : "音频灵敏度",
@@ -59,122 +59,83 @@
 			},
 			"bloom_strength" : 
 			{
-				"index" : 14,
+				"index" : 5,
 				"max" : 3,
 				"min" : 0,
-				"order" : 114,
+				"order" : 105,
 				"precision" : 2,
 				"step" : 0.1,
-				"text" : "泛光强度",
+				"text" : "泛光强度 (Bloom)",
 				"type" : "slider",
 				"value" : 1.5
 			},
 			"cam_pos_x" : 
 			{
 				"condition" : "use_webcam.value",
-				"index" : 9,
+				"index" : 18,
 				"max" : 100,
 				"min" : 0,
-				"order" : 109,
+				"order" : 118,
 				"precision" : 1,
 				"step" : 1,
-				"text" : "摄像头 X轴",
+				"text" : "摄像头窗口 X轴",
 				"type" : "slider",
 				"value" : 50
 			},
 			"cam_pos_y" : 
 			{
 				"condition" : "use_webcam.value",
-				"index" : 10,
+				"index" : 19,
 				"max" : 100,
 				"min" : 0,
-				"order" : 110,
+				"order" : 119,
 				"precision" : 1,
 				"step" : 1,
-				"text" : "摄像头 Y轴",
+				"text" : "摄像头窗口 Y轴",
 				"type" : "slider",
 				"value" : 50
 			},
 			"cam_scale" : 
 			{
 				"condition" : "use_webcam.value",
-				"index" : 11,
+				"index" : 20,
 				"max" : 3,
 				"min" : 0.5,
-				"order" : 111,
+				"order" : 120,
 				"precision" : 2,
 				"step" : 0.1,
-				"text" : "摄像头 大小",
+				"text" : "摄像头窗口 大小",
 				"type" : "slider",
 				"value" : 1
 			},
 			"color_mode" : 
 			{
-				"index" : 2,
+				"index" : 1,
 				"options" : 
 				[
 					{
-						"label" : "Monochrome (Tint)",
+						"label" : "单色 (Monochrome)",
 						"value" : "0"
 					},
 					{
-						"label" : "Dual Gradient",
+						"label" : "双色渐变 (Dual Gradient)",
 						"value" : "1"
 					},
 					{
-						"label" : "Rainbow Spectrum",
+						"label" : "彩虹光谱 (Rainbow)",
 						"value" : "2"
 					},
 					{
-						"label" : "Cyberpunk Neon (Fixed)",
+						"label" : "赛博霓虹 (Cyber Neon)",
 						"value" : "3"
 					}
 				],
-				"order" : 102,
-				"text" : "色彩模式",
+				"order" : 101,
+				"text" : "色彩模式 (Color Mode)",
 				"type" : "combo",
 				"value" : "3"
 			},
 			"core_pos_x" : 
-			{
-				"condition" : "show_hud.value",
-				"index" : 31,
-				"max" : 100,
-				"min" : 0,
-				"order" : 131,
-				"precision" : 1,
-				"step" : 0.5,
-				"text" : "核心组件 X轴",
-				"type" : "slider",
-				"value" : 78
-			},
-			"core_pos_y" : 
-			{
-				"condition" : "show_hud.value",
-				"index" : 32,
-				"max" : 100,
-				"min" : 0,
-				"order" : 132,
-				"precision" : 1,
-				"step" : 0.5,
-				"text" : "核心组件 Y轴",
-				"type" : "slider",
-				"value" : 30
-			},
-			"core_scale" : 
-			{
-				"condition" : "show_hud.value",
-				"index" : 33,
-				"max" : 3,
-				"min" : 0.5,
-				"order" : 133,
-				"precision" : 2,
-				"step" : 0.1,
-				"text" : "核心组件 大小",
-				"type" : "slider",
-				"value" : 1
-			},
-			"energy_pos_x" : 
 			{
 				"condition" : "show_hud.value",
 				"index" : 37,
@@ -183,11 +144,11 @@
 				"order" : 137,
 				"precision" : 1,
 				"step" : 0.5,
-				"text" : "能量条 X轴 (NEW)",
+				"text" : "反应堆 X轴",
 				"type" : "slider",
-				"value" : 95
+				"value" : 78
 			},
-			"energy_pos_y" : 
+			"core_pos_y" : 
 			{
 				"condition" : "show_hud.value",
 				"index" : 38,
@@ -196,11 +157,11 @@
 				"order" : 138,
 				"precision" : 1,
 				"step" : 0.5,
-				"text" : "能量条 Y轴 (NEW)",
+				"text" : "反应堆 Y轴",
 				"type" : "slider",
-				"value" : 40
+				"value" : 30
 			},
-			"energy_scale" : 
+			"core_scale" : 
 			{
 				"condition" : "show_hud.value",
 				"index" : 39,
@@ -209,117 +170,212 @@
 				"order" : 139,
 				"precision" : 2,
 				"step" : 0.1,
-				"text" : "能量条 大小 (NEW)",
+				"text" : "反应堆 大小",
+				"type" : "slider",
+				"value" : 1
+			},
+			"enable_swipe" : 
+			{
+				"condition" : "use_webcam.value",
+				"index" : 16,
+				"order" : 116,
+				"text" : "启用挥手切换 (Swipe to Switch)",
+				"type" : "bool",
+				"value" : true
+			},
+			"energy_pos_x" : 
+			{
+				"condition" : "show_hud.value",
+				"index" : 43,
+				"max" : 100,
+				"min" : 0,
+				"order" : 143,
+				"precision" : 1,
+				"step" : 0.5,
+				"text" : "能量条 X轴",
+				"type" : "slider",
+				"value" : 95
+			},
+			"energy_pos_y" : 
+			{
+				"condition" : "show_hud.value",
+				"index" : 44,
+				"max" : 100,
+				"min" : 0,
+				"order" : 144,
+				"precision" : 1,
+				"step" : 0.5,
+				"text" : "能量条 Y轴",
+				"type" : "slider",
+				"value" : 40
+			},
+			"energy_scale" : 
+			{
+				"condition" : "show_hud.value",
+				"index" : 45,
+				"max" : 3,
+				"min" : 0.5,
+				"order" : 145,
+				"precision" : 2,
+				"step" : 0.1,
+				"text" : "能量条 大小",
 				"type" : "slider",
 				"value" : 1
 			},
 			"geometry_mode" : 
 			{
-				"index" : 4,
+				"index" : 3,
 				"options" : 
 				[
 					{
-						"label" : "WORMHOLE",
+						"label" : "WORMHOLE (虫洞)",
 						"value" : "0"
 					},
 					{
-						"label" : "SUPERNOVA",
+						"label" : "SUPERNOVA (超新星)",
 						"value" : "1"
 					},
 					{
-						"label" : "ACCRETION DISK",
+						"label" : "ACCRETION DISK (吸积盘)",
 						"value" : "2"
 					},
 					{
-						"label" : "CYBER GRID",
+						"label" : "CYBER GRID (矩阵)",
 						"value" : "3"
 					},
 					{
-						"label" : "STARGATE",
+						"label" : "STARGATE (星门)",
 						"value" : "4"
 					},
 					{
-						"label" : "NEBULA KNOT",
+						"label" : "NEBULA KNOT (星云结)",
 						"value" : "5"
 					},
 					{
-						"label" : "BIG BANG",
+						"label" : "BIG BANG (大爆炸)",
 						"value" : "6"
 					},
 					{
-						"label" : "LORENZ",
+						"label" : "LORENZ (混沌)",
 						"value" : "7"
 					},
 					{
-						"label" : "QUASAR JETS",
+						"label" : "QUASAR JETS (类星体)",
 						"value" : "8"
+					},
+					{
+						"label" : "SATURN RING (土星环)",
+						"value" : "9"
+					},
+					{
+						"label" : "CYBER HEART (机械之心)",
+						"value" : "10"
+					},
+					{
+						"label" : "GALAXY SPIRAL (银河螺旋)",
+						"value" : "11"
+					},
+					{
+						"label" : "TORNADO SPIRAL (螺旋风暴)",
+						"value" : "12"
 					}
 				],
-				"order" : 104,
-				"text" : "几何模式",
+				"order" : 103,
+				"text" : "默认几何形状",
 				"type" : "combo",
 				"value" : "0"
 			},
+			"gesture_pinch_sens" : 
+			{
+				"condition" : "use_webcam.value",
+				"index" : 18,
+				"max" : 3,
+				"min" : 0.1,
+				"order" : 118,
+				"precision" : 1,
+				"step" : 0.1,
+				"text" : "捏合旋转灵敏度 (Pinch Rotate Sens)",
+				"type" : "slider",
+				"value" : 1
+			},
+			"gesture_zoom_sens" : 
+			{
+				"condition" : "use_webcam.value",
+				"index" : 17,
+				"max" : 3,
+				"min" : 0.1,
+				"order" : 117,
+				"precision" : 1,
+				"step" : 0.1,
+				"text" : "手势缩放灵敏度 (Gesture Zoom Sens)",
+				"type" : "slider",
+				"value" : 1
+			},
 			"group_audio" : 
 			{
-				"index" : 5,
-				"order" : 105,
-				"text" : "2. Audio",
+				"index" : 11,
+				"order" : 111,
+				"text" : "3. 音频设置 (Audio)",
 				"type" : "group"
 			},
 			"group_basic" : 
 			{
 				"index" : 0,
 				"order" : 100,
-				"text" : "1. Basic",
+				"text" : "1. 基础设置 (Basic)",
 				"type" : "group"
 			},
 			"group_cam" : 
 			{
-				"index" : 7,
-				"order" : 107,
-				"text" : "3. Webcam",
-				"type" : "group"
-			},
-			"group_extra" : 
-			{
-				"index" : 27,
-				"order" : 127,
-				"text" : "6. Extra Widgets (新组件)",
+				"index" : 13,
+				"order" : 113,
+				"text" : "4. 摄像头与手势 (Webcam & Gesture)",
 				"type" : "group"
 			},
 			"group_ui" : 
 			{
-				"index" : 20,
-				"order" : 120,
-				"text" : "5. UI Layout",
+				"index" : 21,
+				"order" : 121,
+				"text" : "5. 界面布局 (UI Layout)",
 				"type" : "group"
 			},
 			"group_visual" : 
 			{
-				"index" : 12,
-				"order" : 112,
-				"text" : "4. Visuals",
+				"index" : 4,
+				"order" : 104,
+				"text" : "2. 视觉效果 (Visuals)",
 				"type" : "group"
 			},
 			"mouse_parallax" : 
 			{
-				"index" : 16,
+				"condition" : "use_webcam.value == false",
+				"index" : 7,
 				"max" : 3,
 				"min" : 0,
-				"order" : 116,
+				"order" : 107,
 				"precision" : 2,
 				"step" : 0.1,
-				"text" : "鼠标视差",
+				"text" : "鼠标视差强度",
 				"type" : "slider",
 				"value" : 1.5
 			},
+			"particle_count" : 
+			{
+				"index" : 9,
+				"max" : 60000,
+				"min" : 10000,
+				"order" : 109,
+				"step" : 1000,
+				"text" : "粒子数量 (高性能需求)",
+				"type" : "slider",
+				"value" : 45000
+			},
 			"particle_size" : 
 			{
-				"index" : 13,
+				"index" : 6,
 				"max" : 5,
 				"min" : 0.5,
-				"order" : 113,
+				"order" : 106,
 				"precision" : 1,
 				"step" : 0.1,
 				"text" : "粒子大小",
@@ -329,73 +385,74 @@
 			"radar_pos_x" : 
 			{
 				"condition" : "show_hud.value",
-				"index" : 34,
+				"index" : 40,
 				"max" : 100,
 				"min" : 0,
-				"order" : 134,
+				"order" : 140,
 				"precision" : 1,
 				"step" : 0.5,
-				"text" : "雷达 X轴 (NEW)",
+				"text" : "雷达 X轴",
 				"type" : "slider",
 				"value" : 5
 			},
 			"radar_pos_y" : 
 			{
 				"condition" : "show_hud.value",
-				"index" : 35,
+				"index" : 41,
 				"max" : 100,
 				"min" : 0,
-				"order" : 135,
+				"order" : 141,
 				"precision" : 1,
 				"step" : 0.5,
-				"text" : "雷达 Y轴 (NEW)",
+				"text" : "雷达 Y轴",
 				"type" : "slider",
 				"value" : 15
 			},
 			"radar_scale" : 
 			{
 				"condition" : "show_hud.value",
-				"index" : 36,
+				"index" : 42,
 				"max" : 3,
 				"min" : 0.5,
-				"order" : 136,
+				"order" : 142,
 				"precision" : 2,
 				"step" : 0.1,
-				"text" : "雷达 大小 (NEW)",
+				"text" : "雷达 大小",
 				"type" : "slider",
 				"value" : 1
 			},
 			"rotation_speed" : 
 			{
-				"index" : 15,
+				"index" : 8,
 				"max" : 2,
 				"min" : 0,
-				"order" : 115,
+				"order" : 108,
 				"precision" : 2,
 				"step" : 0.1,
-				"text" : "旋转速度",
+				"text" : "自动旋转速度",
 				"type" : "slider",
 				"value" : 0.5
 			},
 			"schemecolor" : 
 			{
-				"order" : 1,
-				"text" : "主颜色",
+				"order" : 101,
+				"text" : "主色调 (Primary)",
 				"type" : "color",
 				"value" : "0 0.95 1"
 			},
 			"secondary_color" : 
 			{
 				"condition" : "color_mode.value == 1",
-				"order" : 103,
-				"text" : "副颜色 (用于双色渐变)",
+				"index" : 2,
+				"order" : 102,
+				"text" : "副色调 (Secondary Color)",
 				"type" : "color",
 				"value" : "0.8 0 1"
 			},
 			"show_hud" : 
 			{
-				"index" : 17,
-				"order" : 117,
+				"index" : 10,
+				"order" : 110,
 				"text" : "显示HUD界面",
 				"type" : "bool",
 				"value" : true
@@ -403,10 +460,10 @@
 			"sys_pos_x" : 
 			{
 				"condition" : "show_hud.value",
-				"index" : 21,
+				"index" : 28,
 				"max" : 100,
 				"min" : 0,
-				"order" : 121,
+				"order" : 128,
 				"precision" : 1,
 				"step" : 0.5,
 				"text" : "系统面板 X轴",
@@ -416,10 +473,10 @@
 			"sys_pos_y" : 
 			{
 				"condition" : "show_hud.value",
-				"index" : 22,
+				"index" : 29,
 				"max" : 100,
 				"min" : 0,
-				"order" : 122,
+				"order" : 129,
 				"precision" : 1,
 				"step" : 0.5,
 				"text" : "系统面板 Y轴",
@@ -429,10 +486,10 @@
 			"sys_scale" : 
 			{
 				"condition" : "show_hud.value",
-				"index" : 23,
+				"index" : 30,
 				"max" : 3,
 				"min" : 0.5,
-				"order" : 123,
+				"order" : 130,
 				"precision" : 2,
 				"step" : 0.1,
 				"text" : "系统面板 大小",
@@ -442,10 +499,10 @@
 			"term_pos_x" : 
 			{
 				"condition" : "show_hud.value",
-				"index" : 28,
+				"index" : 34,
 				"max" : 100,
 				"min" : 0,
-				"order" : 128,
+				"order" : 134,
 				"precision" : 1,
 				"step" : 0.5,
 				"text" : "终端面板 X轴",
@@ -455,10 +512,10 @@
 			"term_pos_y" : 
 			{
 				"condition" : "show_hud.value",
-				"index" : 29,
+				"index" : 35,
 				"max" : 100,
 				"min" : 0,
-				"order" : 129,
+				"order" : 135,
 				"precision" : 1,
 				"step" : 0.5,
 				"text" : "终端面板 Y轴",
@@ -468,21 +525,33 @@
 			"term_scale" : 
 			{
 				"condition" : "show_hud.value",
-				"index" : 30,
+				"index" : 36,
 				"max" : 3,
 				"min" : 0.5,
-				"order" : 130,
+				"order" : 136,
 				"precision" : 2,
 				"step" : 0.1,
 				"text" : "终端面板 大小",
 				"type" : "slider",
 				"value" : 1
 			},
+			"trail_strength" : 
+			{
+				"index" : 6,
+				"max" : 0.98,
+				"min" : 0,
+				"order" : 106,
+				"precision" : 2,
+				"step" : 0.01,
+				"text" : "拖尾残影强度 (Trails)",
+				"type" : "slider",
+				"value" : 0.85
+			},
 			"use_webcam" : 
 			{
-				"index" : 8,
-				"order" : 108,
-				"text" : "开启摄像头",
+				"index" : 14,
+				"order" : 114,
+				"text" : "开启摄像头控制 (Webcam)",
 				"type" : "bool",
 				"value" : false
 			}
@@ -492,12 +561,10 @@
 	"preview" : "preview.gif",
 	"ratingsex" : "none",
 	"ratingviolence" : "none",
-	"snapshotformat" : 0,
-	"snapshotoverlay" : "",
 	"tags" : [ "Cyberpunk" ],
-	"title" : "手势交互音乐",
+	"title" : "手势交互音乐 V10",
 	"type" : "web",
-	"version" : 12,
+	"version" : 20,
 	"visibility" : "public",
 	"workshopid" : "3613016255",
 	"workshopurl" : "steam://url/CommunityFilePage/3613016255"

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CYBER VISUALIZER V8.0 - GESTURE CONTROL</title>
+    <title>CYBER VISUALIZER V10.0 - FINAL GESTURE CONTROL</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
         * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
@@ -12,7 +12,6 @@
             background-color: #000; 
             font-family: 'Share Tech Mono', monospace; 
             color: #00f3ff; 
-            transition: filter 0.1s; /* 用于挥手时的故障闪烁 */
         }
         
         /* 背景网格 */
@@ -25,17 +24,10 @@
             z-index: 0; pointer-events: none;
         }
 
-        #canvas-container { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            z-index: 1; 
-        }
-        
-        #ui-layer { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            z-index: 10; pointer-events: none; transition: opacity 0.5s;
-        }
+        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; transition: opacity 0.5s; }
 
-        /* --- UI 样式 --- */
+        /* 装饰性框架 */
         .frame-deco { position: absolute; border: 1px solid rgba(0,243,255,0.3); pointer-events: none; }
         .frame-top-bar { top: 10px; left: 10px; right: 10px; height: 1px; background: linear-gradient(90deg, transparent, #00f3ff, transparent); opacity: 0.5; }
         .frame-btm-bar { bottom: 10px; left: 10px; right: 10px; height: 1px; background: linear-gradient(90deg, transparent, #ff0055, transparent); opacity: 0.5; }
@@ -45,6 +37,7 @@
         .cb-bl { bottom: 20px; left: 20px; border-right: none; border-top: none; border-color: #ff0055; }
         .cb-br { bottom: 20px; right: 20px; border-left: none; border-top: none; border-color: #ff0055; }
 
+        /* 面板样式 */
         .hud-panel {
             background: rgba(0, 10, 20, 0.85); 
             border: 1px solid rgba(0, 243, 255, 0.4);
@@ -67,41 +60,28 @@
             border-radius: 50%; border: 2px solid #00f3ff;
             background: rgba(0, 20, 40, 0.5);
             display: flex; justify-content: center; align-items: center;
-            overflow: hidden; padding: 0; clip-path: none;
+            overflow: hidden; padding: 0;
         }
         .radar-scan {
             position: absolute; width: 100%; height: 100%; border-radius: 50%;
             background: conic-gradient(from 0deg, transparent 0deg, transparent 300deg, rgba(0, 243, 255, 0.5) 360deg);
             animation: radar-spin 2s linear infinite;
         }
-        .radar-grid {
-            position: absolute; width: 100%; height: 100%; border-radius: 50%;
-            background: radial-gradient(transparent 30%, rgba(0,243,255,0.2) 31%, transparent 32%),
-                        radial-gradient(transparent 60%, rgba(0,243,255,0.2) 61%, transparent 62%);
-        }
+        .radar-grid { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(transparent 30%, rgba(0,243,255,0.2) 31%, transparent 32%), radial-gradient(transparent 60%, rgba(0,243,255,0.2) 61%, transparent 62%); }
         .radar-grid::after { content: ''; position: absolute; width: 100%; height: 1px; top: 50%; background: rgba(0,243,255,0.2); }
         .radar-grid::before { content: ''; position: absolute; height: 100%; width: 1px; left: 50%; background: rgba(0,243,255,0.2); }
-        .radar-dot {
-            position: absolute; width: 6px; height: 6px; background: #ff0055; border-radius: 50%;
-            box-shadow: 0 0 8px #ff0055; opacity: 0; animation: blink-dot 2s infinite;
-        }
+        .radar-dot { position: absolute; width: 6px; height: 6px; background: #ff0055; border-radius: 50%; box-shadow: 0 0 8px #ff0055; opacity: 0; animation: blink-dot 2s infinite; }
         @keyframes radar-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes blink-dot { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
 
         .energy-panel {
-            top: 40%; left: 90%; 
-            width: 60px; height: 300px;
+            top: 40%; left: 95%; width: 60px; height: 300px;
             display: flex; flex-direction: column-reverse;
-            background: rgba(0,0,0,0.6); border: 1px solid #00f3ff;
-            padding: 5px;
+            background: rgba(0,0,0,0.6); border: 1px solid #00f3ff; padding: 5px;
         }
         .e-label { position: absolute; top: -25px; left: 0; width: 100%; text-align: center; font-size: 0.7rem; color: #00f3ff; }
         .e-bar-container { width: 100%; height: 100%; position: relative; overflow: hidden; }
-        .e-fill {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 50%;
-            background: repeating-linear-gradient(0deg, #00f3ff, #00f3ff 4px, transparent 4px, transparent 8px);
-            box-shadow: 0 0 10px #00f3ff; transition: height 0.5s;
-        }
+        .e-fill { position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: repeating-linear-gradient(0deg, #00f3ff, #00f3ff 4px, transparent 4px, transparent 8px); box-shadow: 0 0 10px #00f3ff; transition: height 0.5s; }
 
         .term-panel {
             top: 25%; left: 2%; width: 320px; height: 250px;
@@ -111,7 +91,7 @@
         }
         .term-title { background: #00f3ff; color: #000; padding: 2px 5px; font-weight: bold; margin-bottom: 5px; }
         #term-log { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; color: rgba(0,243,255,0.8); line-height: 1.4; }
-        .log-line { white-space: nowrap; overflow: hidden; } .log-line span { color: #fff; }
+        .log-line span { color: #fff; }
 
         .sys-panel { top: 60%; left: 2%; width: 380px; border-top: 2px solid rgba(0,243,255,0.6); clip-path: polygon(0 15%, 5% 0, 100% 0, 100% 100%, 0 100%); }
         .panel-title { font-size: 1.1rem; color: #ff0055; letter-spacing: 3px; margin-bottom: 10px; border-bottom: 1px dashed rgba(255,0,85,0.5); padding-bottom: 5px; }
@@ -125,7 +105,7 @@
         .stat-val { color: #00f3ff; font-weight: bold; } .stat-bar { width: 100%; height: 6px; background: rgba(0,243,255,0.15); margin-top: 4px; } .stat-fill { height: 100%; background: #00f3ff; width: 0%; box-shadow: 0 0 10px #00f3ff; }
 
         .core-panel {
-            top: 30%; left: 80%; 
+            top: 30%; left: 78%;
             width: 220px; height: 220px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             background: transparent; border: none; box-shadow: none; backdrop-filter: none;
@@ -150,9 +130,8 @@
         .reticle { width: 40px; height: 40px; border: 1px solid rgba(255,0,85,0.6); position: relative; box-shadow: 0 0 10px rgba(255,0,85,0.3); transition: transform 0.2s, border-color 0.2s; }
         .cam-ui { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 6; display: flex; justify-content: center; align-items: center; border: 1px solid rgba(0,243,255,0.3); }
         #cam-status-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, 30px); font-size: 10px; color: #fff; text-shadow: 0 0 5px #ff0055; z-index: 7; text-align: center; width: 100%; }
-        
-        .glitch-text::after { content: '_'; animation: blink 0.5s infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
+        #gesture-alert { position: absolute; top: 10px; left: 0; width: 100%; text-align: center; font-weight: bold; font-size: 14px; color: #00f3ff; display: none; text-shadow: 0 0 5px #00f3ff; }
+        #control-mode-text { position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; color: #00ff00; font-weight: bold; font-size: 12px; display: none; text-shadow: 0 0 5px #00ff00; }
     </style>
     <script type="importmap">
         {
@@ -177,7 +156,7 @@
 
         <div class="hud-panel header-box" id="main-hud">
             <h1>BORAN <span>SYS</span></h1>
-            <div class="sub-header">KERNEL: 5.14.0-CYBER // SECURE</div>
+            <div class="sub-header">KERNEL: 10.0-FINAL // SECURE</div>
             <div class="sub-header" id="date-display" style="color: #ff0055">2077-01-01</div>
         </div>
         
@@ -218,7 +197,9 @@
         <div id="cam-container">
             <div class="scanlines"></div>
             <div class="cam-ui"><div class="reticle"></div></div>
+            <div id="gesture-alert">SWIPE DETECTED</div>
             <div id="cam-status-text">INIT...</div>
+            <div id="control-mode-text">/// MANUAL OVERRIDE ///</div>
             <video id="webcam-video" autoplay playsinline muted></video>
         </div>
 
@@ -267,22 +248,35 @@
         import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
         import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
         import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+        import { AfterimagePass } from 'three/addons/postprocessing/AfterimagePass.js';
         import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision';
 
-        // --- 核心初始化 ---
         const config = {
             count: 45000, 
             baseSize: 2.5,
             color: new THREE.Color('#00f3ff'),
-            color2: new THREE.Color('#d000ff'), // 副颜色
-            colorMode: 3, // 默认赛博朋克模式 (0:单色, 1:双色, 2:彩虹, 3:赛博)
+            secondaryColor: new THREE.Color('#d000ff'),
             audioSens: 2.0,
             bloomStr: 1.5,
             rotSpeed: 0.5,
             mouseParallax: 1.5,
             useWebcam: false,
-            mode: 0
+            mode: 0,
+            colorMode: 3, 
+            swipeEnabled: true,
+            isPinched: false,
+            handX: 0.5, 
+            handY: 0.5,
+            // 新增灵敏度配置
+            zoomSens: 1.0, 
+            pinchSens: 1.0
         };
+
+        const modeNames = [
+            "WORMHOLE", "SUPERNOVA", "ACCRETION DISK", "CYBER GRID", "STARGATE", 
+            "NEBULA KNOT", "BIG BANG", "LORENZ", "QUASAR", 
+            "SATURN RING", "CYBER HEART", "GALAXY SPIRAL", "TORNADO SPIRAL"
+        ];
 
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x000000, 0.0007);
@@ -297,79 +291,98 @@
 
         const composer = new EffectComposer(renderer);
         composer.addPass(new RenderPass(scene, camera));
+        
+        const afterimagePass = new AfterimagePass();
+        afterimagePass.uniforms["damp"].value = 0.85; 
+        composer.addPass(afterimagePass);
+
         const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
         composer.addPass(bloomPass);
 
-        // --- 几何与粒子 ---
         const geometry = new THREE.BufferGeometry();
         const posArr = new Float32Array(config.count * 3);
         const targetArr = new Float32Array(config.count * 3);
         const colArr = new Float32Array(config.count * 3);
         const sizeArr = new Float32Array(config.count);
 
-        const shapes = { 0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[] };
-        const modeNames = ["WORMHOLE", "SUPERNOVA", "ACCRETION DISK", "CYBER GRID", "STARGATE", "NEBULA KNOT", "BIG BANG", "LORENZ", "QUASAR"];
+        const shapes = {}; 
         function rand(min, max) { return Math.random() * (max - min) + min; }
 
-        // 生成所有形状 (保持不变)
-        for(let i=0; i<config.count; i++) {
-            const t = i/config.count; const a = t * Math.PI * 40; const r = 200 + Math.pow(Math.abs(t-0.5)*2, 2)*1200;
-            shapes[0].push(Math.cos(a)*r+rand(-50,50), Math.sin(a)*r+rand(-50,50), (t-0.5)*4000);
-        }
-        for(let i=0; i<config.count; i++) {
-            const th = Math.random()*Math.PI*2; const ph = Math.acos((Math.random()*2)-1);
-            const r = 20 + Math.pow(Math.random(), 3) * 2000;
-            shapes[1].push(r*Math.sin(ph)*Math.cos(th), r*Math.sin(ph)*Math.sin(th), r*Math.cos(ph));
-        }
-        for(let i=0; i<config.count; i++) {
-            const a = Math.random()*Math.PI*2; 
-            if(Math.random()>0.85) { 
-                const r = Math.random()*300; const p = Math.acos((Math.random()*2)-1); shapes[2].push(r*Math.sin(p)*Math.cos(a), r*Math.sin(p)*Math.sin(a), r*Math.cos(p)); 
-            } else {
-                let r = 400 + Math.random()*1000; shapes[2].push(r*Math.cos(a), (Math.random()-0.5)*50*(1500/r), r*Math.sin(a));
-            }
-        }
-        for(let i=0; i<config.count; i++) {
-            const gs = 80; const x = rand(-1500, 1500); const z = rand(-1500, 1500);
-            const gx = Math.round(x/gs)*gs; const gz = Math.round(z/gs)*gs;
-            shapes[3].push(gx, Math.sin(gx*0.003)*Math.cos(gz*0.003)*400 + rand(-10,10), gz);
-        }
-        for(let i=0; i<config.count; i++) {
-            const u = i/config.count * Math.PI*2; const r = 900 + 200*Math.cos(8*u);
-            shapes[4].push(r*Math.cos(3*u), r*Math.sin(3*u), 300*Math.sin(8*u) + rand(-80,80));
-        }
-        for(let i=0; i<config.count; i++) {
-            const t = (i/config.count)*Math.PI*120; const s = 700;
-            shapes[5].push(s*(Math.cos(t)+Math.cos(3*t))*0.5+rand(-100,100), s*(Math.sin(t)+Math.sin(3*t))*0.5+rand(-100,100), s*Math.sin(4*t)*0.5+rand(-100,100));
-        }
-        for(let i=0; i<config.count; i++) {
-            const th = Math.random()*Math.PI*2; const ph = Math.acos((Math.random()*2)-1);
-            const r = (Math.exp(Math.random()*4.5)-1) * 35; 
-            shapes[6].push(r*Math.sin(ph)*Math.cos(th), r*Math.sin(ph)*Math.sin(th), r*Math.cos(ph));
-        }
-        let lx=0.1, ly=0, lz=0; const dt=0.003;
-        for(let i=0; i<config.count; i++) {
-            let dx = 10*(ly-lx)*dt; let dy = (lx*(28-lz)-ly)*dt; let dz = (lx*ly-(8/3)*lz)*dt;
-            lx+=dx; ly+=dy; lz+=dz; shapes[7].push(lx*35, ly*35, (lz-25)*35);
-        }
-        for(let i=0; i<config.count; i++) {
-            if (Math.random() < 0.25) {
-                const r = Math.random() * 250; const th = Math.random()*Math.PI*2; const ph = Math.acos((Math.random()*2)-1);
-                shapes[8].push(r*Math.sin(ph)*Math.cos(th), r*Math.sin(ph)*Math.sin(th), r*Math.cos(ph));
-            } else {
-                const y = (Math.random()-0.5) * 4500; const spread = 20 + Math.abs(y)*0.12; 
-                shapes[8].push(rand(-spread,spread), y, rand(-spread,spread));
-            }
-        }
+        function initShapes() {
+            for(let k=0; k<modeNames.length; k++) shapes[k] = [];
 
-        // 填充 buffer
-        for(let i=0; i<config.count*3; i++) { posArr[i] = shapes[0][i]; targetArr[i] = shapes[0][i]; colArr[i] = Math.random(); }
+            for(let i=0; i<config.count; i++) {
+                const t = i/config.count; const a = t * Math.PI * 40; const r = 200 + Math.pow(Math.abs(t-0.5)*2, 2)*1200;
+                shapes[0].push(Math.cos(a)*r+rand(-50,50), Math.sin(a)*r+rand(-50,50), (t-0.5)*4000);
+            }
+            for(let i=0; i<config.count; i++) {
+                const th = Math.random()*Math.PI*2; const ph = Math.acos((Math.random()*2)-1); const r = 20 + Math.pow(Math.random(), 3) * 2000;
+                shapes[1].push(r*Math.sin(ph)*Math.cos(th), r*Math.sin(ph)*Math.sin(th), r*Math.cos(ph));
+            }
+            for(let i=0; i<config.count; i++) {
+                const a = Math.random()*Math.PI*2; 
+                if(Math.random()>0.85) { const r = Math.random()*300; const p = Math.acos((Math.random()*2)-1); shapes[2].push(r*Math.sin(p)*Math.cos(a), r*Math.sin(p)*Math.sin(a), r*Math.cos(p)); } 
+                else { let r = 400 + Math.random()*1000; shapes[2].push(r*Math.cos(a), (Math.random()-0.5)*50*(1500/r), r*Math.sin(a)); }
+            }
+            for(let i=0; i<config.count; i++) {
+                const gs = 80; const x = rand(-1500, 1500); const z = rand(-1500, 1500); const gx = Math.round(x/gs)*gs; const gz = Math.round(z/gs)*gs;
+                shapes[3].push(gx, Math.sin(gx*0.003)*Math.cos(gz*0.003)*400 + rand(-10,10), gz);
+            }
+            for(let i=0; i<config.count; i++) {
+                const u = i/config.count * Math.PI*2; const r = 900 + 200*Math.cos(8*u); shapes[4].push(r*Math.cos(3*u), r*Math.sin(3*u), 300*Math.sin(8*u) + rand(-80,80));
+            }
+            for(let i=0; i<config.count; i++) {
+                const t = (i/config.count)*Math.PI*120; const s = 700; shapes[5].push(s*(Math.cos(t)+Math.cos(3*t))*0.5+rand(-100,100), s*(Math.sin(t)+Math.sin(3*t))*0.5+rand(-100,100), s*Math.sin(4*t)*0.5+rand(-100,100));
+            }
+            for(let i=0; i<config.count; i++) {
+                const th = Math.random()*Math.PI*2; const ph = Math.acos((Math.random()*2)-1); const r = (Math.exp(Math.random()*4.5)-1) * 35; shapes[6].push(r*Math.sin(ph)*Math.cos(th), r*Math.sin(ph)*Math.sin(th), r*Math.cos(ph));
+            }
+            let lx=0.1, ly=0, lz=0; const dt=0.003;
+            for(let i=0; i<config.count; i++) {
+                let dx = 10*(ly-lx)*dt; let dy = (lx*(28-lz)-ly)*dt; let dz = (lx*ly-(8/3)*lz)*dt; lx+=dx; ly+=dy; lz+=dz; shapes[7].push(lx*35, ly*35, (lz-25)*35);
+            }
+            for(let i=0; i<config.count; i++) {
+                if (Math.random() < 0.25) { const r = Math.random() * 250; const th = Math.random()*Math.PI*2; const ph = Math.acos((Math.random()*2)-1); shapes[8].push(r*Math.sin(ph)*Math.cos(th), r*Math.sin(ph)*Math.sin(th), r*Math.cos(ph)); } 
+                else { const y = (Math.random()-0.5) * 4500; const spread = 20 + Math.abs(y)*0.12; shapes[8].push(rand(-spread,spread), y, rand(-spread,spread)); }
+            }
+            for(let i=0; i<config.count; i++) {
+                if (Math.random() > 0.3) {
+                    const r = 250; const th = Math.random()*Math.PI*2; const ph = Math.acos((Math.random()*2)-1); shapes[9].push(r*Math.sin(ph)*Math.cos(th), r*Math.sin(ph)*Math.sin(th), r*Math.cos(ph));
+                } else {
+                    const r = 400 + Math.random()*400; const a = Math.random()*Math.PI*2; shapes[9].push(r*Math.cos(a), rand(-10,10), r*Math.sin(a));
+                }
+            }
+            for(let i=0; i<config.count; i++) {
+                const t = Math.random() * Math.PI * 2; const p = Math.random() * Math.PI;
+                const x = 16 * Math.pow(Math.sin(p), 3) * Math.cos(t);
+                const y = 13 * Math.cos(p) - 5 * Math.cos(2*p) - 2 * Math.cos(3*p) - Math.cos(4*p);
+                const z = 16 * Math.pow(Math.sin(p), 3) * Math.sin(t);
+                const s = 30; shapes[10].push(x*s + rand(-20,20), y*s + rand(-20,20), z*s + rand(-20,20));
+            }
+            for(let i=0; i<config.count; i++) {
+                const arms = 5; const armOffset = (Math.floor(Math.random()*arms)/arms) * Math.PI*2;
+                const dist = Math.random(); const r = Math.pow(dist, 2) * 1200; const angle = dist * 10 + armOffset;
+                shapes[11].push(r*Math.cos(angle) + rand(-100,100), (Math.random()-0.5)*200*(1-dist), r*Math.sin(angle) + rand(-100,100));
+            }
+            // Tornado Spiral
+            for(let i=0; i<config.count; i++) {
+                const t = i / config.count;
+                const h = (t - 0.5) * 1600; 
+                const r = 50 + t * 600; 
+                const twist = t * Math.PI * 12; 
+                const armOffset = (i % 3) * (Math.PI * 2 / 3); 
+                const angle = twist + armOffset + rand(-0.3, 0.3); 
+                shapes[12].push(r * Math.cos(angle), h, r * Math.sin(angle));
+            }
+        }
+        initShapes();
+
+        for(let i=0; i<config.count*3; i++) { posArr[i] = shapes[0][i]; targetArr[i] = shapes[0][i]; colArr[i] = i/config.count; }
         for(let i=0; i<config.count; i++) sizeArr[i] = Math.random();
         geometry.setAttribute('position', new THREE.BufferAttribute(posArr, 3));
         geometry.setAttribute('colorAttr', new THREE.BufferAttribute(colArr, 1));
         geometry.setAttribute('size', new THREE.BufferAttribute(sizeArr, 1));
 
-        // --- Shader Material ---
         const uniforms = {
             uTime: { value: 0 },
             uBass: { value: 0 }, uMid: { value: 0 }, uHigh: { value: 0 },
@@ -377,11 +390,9 @@
             uInteractStr: { value: 0 }, 
             uMode: { value: 0 },
             uColor: { value: config.color }, 
-            uColor2: { value: config.color2 },
-            uColorMode: { value: config.colorMode },
+            uSecColor: { value: config.secondaryColor },
             uSize: { value: config.baseSize },
-            // NEW: 控制吸引(1.0)还是排斥(0.0)
-            uAttract: { value: 0.0 }
+            uColorMode: { value: config.colorMode }
         };
 
         const material = new THREE.ShaderMaterial({
@@ -389,42 +400,23 @@
             vertexShader: `
                 uniform float uTime;
                 uniform float uBass; uniform float uMid; uniform float uHigh;
-                uniform vec3 uInteractPos; uniform float uInteractStr; 
-                uniform float uMode; uniform float uSize;
-                // NEW: 引入吸引参数
-                uniform float uAttract;
-
+                uniform vec3 uInteractPos; uniform float uInteractStr; uniform float uMode; uniform float uSize;
                 attribute float size; attribute float colorAttr; 
-                varying float vType; varying float vIntensity; varying float vColorAttr;
-                
+                varying float vType; varying float vIntensity; varying vec3 vPos;
                 void main() {
-                    vType = colorAttr; vColorAttr = colorAttr; 
-                    vec3 pos = position;
+                    vType = colorAttr; vec3 pos = position; vPos = pos;
                     float iB = 1.0-step(0.33, colorAttr); float iH = step(0.66, colorAttr); float iM = 1.0-iB-iH;
                     vec3 dir = normalize(pos);
                     vec3 mB = dir * uBass * 100.0;
                     float sw = uMid * length(pos)*0.0006;
                     vec3 mM = (vec3(pos.x*cos(sw)-pos.z*sin(sw), pos.y, pos.x*sin(sw)+pos.z*cos(sw)) - pos) * iM;
                     vec3 mH = dir * sin(uTime*15.0+pos.x*0.05) * uHigh * 25.0;
-                    
                     float dist = distance(pos.xy, uInteractPos.xy);
                     vec3 mInt = vec3(0.0);
-                    
                     if (uMode < 0.5) { 
-                        // WORMHOLE MODE INTERACTION
                         float repel = smoothstep(800.0, 0.0, dist) * 300.0 * uInteractStr;
-                        // 如果 uAttract=0 (手掌)，direction=1 (排斥)
-                        // 如果 uAttract=1 (握拳)，direction=-1 (吸引)
-                        float direction = 1.0 - 2.0 * uAttract;
-                        mInt = dir * repel * direction; 
-                    } else { 
-                        // OTHER MODES
-                        float factor = 0.6 + uInteractStr * 1.4;
-                        // 握拳时，其他模式也会略微收缩
-                        if(uAttract > 0.5) factor = 0.6 + uInteractStr * 0.5;
-                        pos *= factor; 
-                    }
-
+                        mInt = dir * repel; 
+                    } else { pos *= (0.6 + uInteractStr * 1.4); }
                     pos += mB + mM + mH + mInt;
                     vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
                     gl_Position = projectionMatrix * mvPos;
@@ -434,58 +426,37 @@
                 }
             `,
             fragmentShader: `
-                uniform vec3 uColor; uniform vec3 uColor2; uniform float uColorMode; uniform float uTime;
-                varying float vType; varying float vIntensity; varying float vColorAttr;
-                
-                vec3 hsl2rgb(float h, float s, float l) {
-                    vec3 t = vec3(0.0, 1.0, 2.0)/3.0;
-                    vec3 c = vec3(0.0);
-                    c.r = max(0.0, 1.0 - abs(6.0 * abs(h - t.r) - 3.0));
-                    c.g = max(0.0, 1.0 - abs(6.0 * abs(h - t.g) - 3.0));
-                    c.b = max(0.0, 1.0 - abs(6.0 * abs(h - t.b) - 3.0));
-                    return l + s * (c - 0.5) * (1.0 - abs(2.0 * l - 1.0));
+                uniform vec3 uColor; uniform vec3 uSecColor; uniform float uColorMode; uniform float uTime;
+                varying float vType; varying float vIntensity; varying vec3 vPos;
+                vec3 hsl2rgb( in vec3 c ) {
+                    vec3 rgb = clamp( abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0, 1.0 );
+                    return c.z + c.y * (rgb-0.5)*(1.0-abs(2.0*c.z-1.0));
                 }
-
                 void main() {
                     if(dot(gl_PointCoord-0.5, gl_PointCoord-0.5)>0.25) discard;
-                    
-                    vec3 finalColor = uColor;
-                    
-                    if (uColorMode < 0.5) { 
-                        vec3 cB = uColor; vec3 cM = uColor * 1.2 + vec3(0.1); vec3 cH = vec3(1.0);
-                        float iB = 1.0-step(0.33,vType); float iH = step(0.66,vType); float iM = 1.0-iB-iH;
-                        finalColor = cB*iB + cM*iM + cH*iH;
-                    } 
-                    else if (uColorMode < 1.5) {
-                        finalColor = mix(uColor, uColor2, vColorAttr);
-                    }
-                    else if (uColorMode < 2.5) {
-                        float h = fract(vColorAttr + uTime * 0.1);
-                        finalColor = hsl2rgb(h, 0.9, 0.6);
-                    }
+                    vec3 finalCol = uColor;
+                    if (uColorMode < 0.5) { finalCol = uColor + vec3(vIntensity*0.5); }
+                    else if (uColorMode < 1.5) { finalCol = mix(uColor, uSecColor, vType + vIntensity*0.2); }
+                    else if (uColorMode < 2.5) { float hue = fract(length(vPos) * 0.001 - uTime * 0.1); finalCol = hsl2rgb(vec3(hue, 0.8, 0.6)); finalCol += vec3(vIntensity * 0.5); }
                     else {
-                        if (vColorAttr < 0.33) finalColor = vec3(1.0, 0.0, 0.4); 
-                        else if (vColorAttr < 0.66) finalColor = vec3(0.0, 1.0, 1.0); 
-                        else finalColor = vec3(0.6, 0.0, 1.0); 
+                        vec3 c1 = vec3(0.0, 0.95, 1.0); vec3 c2 = vec3(1.0, 0.0, 0.33); vec3 c3 = vec3(0.8, 0.0, 1.0);
+                        float t = fract(vType * 3.0 + uTime * 0.2);
+                        if(t < 0.33) finalCol = mix(c1, c2, t*3.0);
+                        else if(t < 0.66) finalCol = mix(c2, c3, (t-0.33)*3.0);
+                        else finalCol = mix(c3, c1, (t-0.66)*3.0);
+                        finalCol += vec3(vIntensity);
                     }
-
-                    finalColor += vec3(vIntensity * 0.4);
-                    gl_FragColor = vec4(finalColor, 0.95);
+                    gl_FragColor = vec4(finalCol, 0.9);
                 }
             `,
             transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
         });
         scene.add(new THREE.Points(geometry, material));
 
-        // --- 摄像头视觉 (Vision & Webcam) ---
-        // NEW: 手势相关全局变量
-        let lastHandX = -1;
-        let gestureCooldown = 0;
-        let fistState = false;
-        const GESTURE_COOLDOWN_TIME = 25; // 挥手后冷却帧数
-
         let handLandmarker; let video = document.getElementById('webcam-video');
         let stream = null; let lastVidTime = -1; let visionLoaded = false;
+        let lastHandX = -1; let swipeCooldown = 0;
+
         async function initVision() {
             try {
                 const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm");
@@ -516,291 +487,141 @@
             }
         }
 
-        // 定义一个变量来记录上一次挥手的时间，防止连续触发
-        let lastSwipeTime = 0;
+        function switchMode(dir) {
+            let newMode = config.mode + dir;
+            if(newMode >= modeNames.length) newMode = 0;
+            if(newMode < 0) newMode = modeNames.length - 1;
+            config.mode = newMode;
+            document.getElementById('mode-display').innerText = modeNames[newMode];
+            const arr = shapes[newMode] || shapes[0];
+            for(let i=0; i<config.count*3; i++) targetArr[i] = arr[i];
+            
+            const alert = document.getElementById('gesture-alert');
+            alert.innerText = `SWITICHING: ${modeNames[newMode]}`;
+            alert.style.display = 'block';
+            setTimeout(() => alert.style.display = 'none', 1500);
+        }
 
         async function predictLoop() {
-            // 强制检查：如果在浏览器运行且没通过Wallpaper Engine开启，手动设为true测试
-            // config.useWebcam = true; 
-
             if (!config.useWebcam || !stream) return;
-            
             if (visionLoaded && handLandmarker && video.currentTime !== lastVidTime) {
                 lastVidTime = video.currentTime;
-                let result = null;
-                try {
-                    result = handLandmarker.detectForVideo(video, performance.now());
-                } catch(e) { /* 忽略掉帧错误 */ }
-
+                const result = handLandmarker.detectForVideo(video, performance.now());
                 const statusText = document.getElementById('cam-status-text');
                 const reticle = document.querySelector('.reticle');
+                const controlText = document.getElementById('control-mode-text');
                 
-                if (result && result.landmarks.length > 0) {
+                if (result.landmarks.length > 0) {
                     const lm = result.landmarks[0];
-                    const wrist = lm[0];
-
-                    // 1. 基础交互位置和强度
-                    let distSum = 0; 
-                    [lm[4], lm[8], lm[12], lm[16], lm[20]].forEach(t => distSum += Math.sqrt(Math.pow(t.x-lm[0].x,2) + Math.pow(t.y-lm[0].y,2)));
-                    let scale = (distSum/5 - 0.1) * 3.5; 
-                    uniforms.uInteractStr.value += (scale - uniforms.uInteractStr.value) * 0.15;
-
-                    // 2. 握拳检测 (Fist Detection)
-                    let tipsToWrist = 0;
-                    [lm[8], lm[12], lm[16], lm[20]].forEach(p => {
-                        tipsToWrist += Math.sqrt(Math.pow(p.x - wrist.x, 2) + Math.pow(p.y - wrist.y, 2));
-                    });
-
-                    // 【修复2】调低握拳判定的阈值，从 0.35 改为 0.25，防止挥手时误判为握拳
-                    const FIST_THRESHOLD = 0.25; 
-
-                    if (tipsToWrist < FIST_THRESHOLD) {
-                        fistState = true;
-                        uniforms.uAttract.value = 1.0; 
-                        statusText.innerText = "GRAVITY WELL";
-                        statusText.style.color = "#ff0000";
-                        reticle.style.borderColor = "#ff0000";
-                        reticle.style.transform = "rotate(45deg) scale(0.8)";
-                    } else {
-                        fistState = false;
-                        uniforms.uAttract.value = 0.0;
-                    }
-			// 在 predictLoop 内部获取 landmarks 后：
-
-const thumbTip = lm[4];
-const indexTip = lm[8];
-
-// 计算拇指和食指的距离
-const pinchDist = Math.sqrt(Math.pow(thumbTip.x - indexTip.x, 2) + Math.pow(thumbTip.y - indexTip.y, 2));
-
-// 设定阈值 (根据实际调试，通常 0.03 - 0.05 比较合适)
-const PINCH_THRESHOLD = 0.05;
-
-if (pinchDist < PINCH_THRESHOLD) {
-    // 触发捏合状态
-    uniforms.uAttract.value = 1.0; // 开启吸引模式（模拟捏住东西）
-    
-    // 让吸引力更强，范围更小，模拟精确捏取
-    // 你可能需要在 Shader 里加一个 uInteractRadius 变量来控制范围
-    
-    // UI 反馈
-    document.querySelector('.reticle').style.transform = "scale(0.5)"; // 准星收缩
-    document.querySelector('.reticle').style.borderColor = "#00ff00"; // 变绿表示以此锁定
-} else {
-    // 松开
-    if (!fistState) { // 如果没握拳
-        uniforms.uAttract.value = 0.0;
-    }
-}
-
-                    // 3. 挥手检测 (Swipe Detection)
-                    // 只有在未握拳且冷却完毕时触发
-                    if (!fistState && gestureCooldown <= 0 && lastHandX !== -1) {
-                        const deltaX = wrist.x - lastHandX;
+                    
+                    // 1. 手势缩放 (应用 Zoom Sensitivity)
+                    let dist = 0; [lm[4], lm[8], lm[12], lm[16], lm[20]].forEach(t => dist += Math.sqrt(Math.pow(t.x-lm[0].x,2) + Math.pow(t.y-lm[0].y,2)));
+                    let scale = (dist/5 - 0.1) * (3.5 * config.zoomSens); // 默认系数3.5 * 灵敏度
+                    
+                    // 2. 捏合检测
+                    const pinchDist = Math.sqrt(Math.pow(lm[4].x - lm[8].x, 2) + Math.pow(lm[4].y - lm[8].y, 2));
+                    
+                    if (pinchDist < 0.06) { 
+                        config.isPinched = true;
+                        config.handX = lm[9].x; 
+                        config.handY = lm[9].y;
                         
-                        // 【修复1】大幅降低阈值，从 0.25 改为 0.04
-                        // 注意：MediaPipe镜像后，x坐标逻辑可能相反，取决于你实际挥手方向
-                        const speedThreshold = 0.04; 
+                        statusText.innerText = "MANUAL CONTROL"; statusText.style.color = "#00ff00";
+                        controlText.style.display = "block";
+                        reticle.style.borderColor = "#00ff00";
+                        reticle.style.transform = "scale(0.8)";
+                        
+                        uniforms.uInteractStr.value += (0 - uniforms.uInteractStr.value) * 0.1;
+                    } else {
+                        config.isPinched = false;
+                        statusText.innerText = "TARGET LOCKED"; statusText.style.color = "#ff0055";
+                        controlText.style.display = "none";
+                        reticle.style.borderColor = "#ff0055"; 
+                        reticle.style.transform = "rotate(45deg)";
+                        
+                        uniforms.uInteractStr.value += (scale - uniforms.uInteractStr.value) * 0.15;
+                    }
 
-                        // 增加时间间隔检查，避免计算过于频繁
-                        if (Math.abs(deltaX) > speedThreshold) {
-                            // 这里根据你的镜像设置，如果方向反了，把 NEXT 和 PREV 对调即可
-                            if (deltaX > 0) triggerSwipe("PREV"); // x增大通常是向右
-                            else triggerSwipe("NEXT");            // x减小通常是向左
+                    // 3. 挥手逻辑
+                    const currX = lm[0].x;
+                    const now = performance.now();
+                    if (config.swipeEnabled && lastHandX !== -1 && now > swipeCooldown && !config.isPinched) { 
+                        const delta = currX - lastHandX;
+                        if (Math.abs(delta) > 0.05) { 
+                            if (delta < 0) switchMode(1);
+                            else switchMode(-1);
+                            swipeCooldown = now + 1000;
                         }
                     }
-
-                    // 更新上一帧位置
-                    lastHandX = wrist.x;
-                    if (gestureCooldown > 0) gestureCooldown--;
-
-                    // 4. 更新 Shader 交互坐标
-                    let ix = (1.0 - wrist.x) * 2.0 - 1.0; 
-                    let iy = (1.0 - wrist.y) * 2.0 - 1.0; 
-                    let oldPos = uniforms.uInteractPos.value;
-                    uniforms.uInteractPos.value.set(
-                        oldPos.x + (ix * 800 - oldPos.x) * 0.2, 
-                        oldPos.y + (iy * 800 - oldPos.y) * 0.2, 
-                        0
-                    );
-
-                    // 普通锁定状态 UI
-                    if (!fistState && gestureCooldown <= 0) {
-                        statusText.innerText = "TARGET LOCKED"; 
-                        statusText.style.color = "#ff0055";
-                        reticle.style.borderColor = "#ff0055"; 
-                        reticle.style.transform = "rotate(0deg) scale(1)";
-                    }
+                    lastHandX = currX;
 
                 } else {
-                    // 丢失目标
+                    uniforms.uInteractStr.value += (1.0 - uniforms.uInteractStr.value) * 0.05;
+                    statusText.innerText = "SEARCHING..."; statusText.style.color = "#00f3ff";
+                    controlText.style.display = "none";
+                    reticle.style.borderColor = "rgba(0,243,255,0.6)"; reticle.style.transform = "rotate(0deg)";
                     lastHandX = -1;
-                    uniforms.uInteractStr.value += (0.0 - uniforms.uInteractStr.value) * 0.05;
-                    uniforms.uAttract.value = 0.0;
-                    statusText.innerText = "SEARCHING..."; 
-                    statusText.style.color = "#00f3ff";
-                    reticle.style.borderColor = "rgba(0,243,255,0.6)"; 
-                    reticle.style.transform = "rotate(0deg)";
+                    config.isPinched = false; 
                 }
             }
             requestAnimationFrame(predictLoop);
         }
 
-        // --- 辅助：触发挥手切换 ---
-        function triggerSwipe(dir) {
-            gestureCooldown = GESTURE_COOLDOWN_TIME;
-            
-            // 切换模式
-            if (dir === "NEXT") config.mode = (config.mode + 1) % modeNames.length;
-            else config.mode = (config.mode - 1 + modeNames.length) % modeNames.length;
-            
-            // 更新显示和 Shader
-            document.getElementById('mode-display').innerText = modeNames[config.mode];
-            uniforms.uMode.value = config.mode;
-            
-            // 重置粒子目标
-            const arr = shapes[config.mode] || shapes[0];
-            for(let i=0; i<config.count*3; i++) targetArr[i] = arr[i];
-
-            // 视觉特效：文字提示 + 屏幕色相故障
-            const st = document.getElementById('cam-status-text');
-            st.innerText = `SWIPE ${dir}`;
-            st.style.color = "#d000ff";
-            
-            document.body.style.filter = "hue-rotate(90deg) contrast(1.2)";
-            setTimeout(() => { document.body.style.filter = "none"; }, 150);
-        }
-
-        // --- 鼠标交互 ---
-        window.addEventListener('click', () => {
-            // 保留鼠标点击切换作为备用
-            triggerSwipe("NEXT");
-        });
         const mouse = new THREE.Vector2();
         window.addEventListener('mousemove', (e) => {
             mouse.x = (e.clientX/window.innerWidth)*2-1; mouse.y = -(e.clientY/window.innerHeight)*2+1;
             if(!config.useWebcam) { uniforms.uInteractPos.value.set(mouse.x*800, mouse.y*800, 0); uniforms.uInteractStr.value=1.0; }
         });
 
-        // --- UI 更新逻辑 ---
         const uiElems = {
-            sysPanel: document.querySelector('.sys-panel'),
-            audioPanel: document.querySelector('.audio-panel'),
-            termPanel: document.querySelector('.term-panel'),
-            corePanel: document.querySelector('.core-panel'),
-            radarPanel: document.querySelector('.radar-panel'),
-            energyPanel: document.querySelector('.energy-panel'),
-            energyFill: document.querySelector('.e-fill'),
-            radarGrid: document.querySelector('.radar-grid'),
-            fpsVal: document.getElementById('fps-val'), 
-            fpsBar: document.getElementById('fps-bar'), 
-            dateVal: document.getElementById('date-display'), 
-            gainVal: document.getElementById('gain-val'), 
-            volBig: document.getElementById('vol-big'), 
-            bars: document.querySelectorAll('.a-fill'), 
+            sysPanel: document.querySelector('.sys-panel'), audioPanel: document.querySelector('.audio-panel'),
+            termPanel: document.querySelector('.term-panel'), corePanel: document.querySelector('.core-panel'),
+            radarPanel: document.querySelector('.radar-panel'), energyPanel: document.querySelector('.energy-panel'),
+            energyFill: document.querySelector('.e-fill'), radarGrid: document.querySelector('.radar-grid'),
+            fpsVal: document.getElementById('fps-val'), fpsBar: document.getElementById('fps-bar'), 
+            dateVal: document.getElementById('date-display'), gainVal: document.getElementById('gain-val'), 
+            volBig: document.getElementById('vol-big'), bars: document.querySelectorAll('.a-fill'), 
             termLog: document.getElementById('term-log'), 
-            cpuGauge: document.getElementById('cpu-gauge'), 
-            cpuNum: document.getElementById('cpu-num'), 
-            ramGauge: document.getElementById('ram-gauge'), 
-            ramNum: document.getElementById('ram-num'), 
-            netGauge: document.getElementById('net-gauge'), 
-            netNum: document.getElementById('net-num')
+            cpuGauge: document.getElementById('cpu-gauge'), cpuNum: document.getElementById('cpu-num'), 
+            ramGauge: document.getElementById('ram-gauge'), ramNum: document.getElementById('ram-num'), 
+            netGauge: document.getElementById('net-gauge'), netNum: document.getElementById('net-num')
         };
 
-        function updateRadar() {
-            if (Math.random() < 0.05) {
-                const dot = document.createElement('div'); dot.className = 'radar-dot';
-                const ang = Math.random() * Math.PI * 2; const dist = Math.random() * 45; 
-                dot.style.left = (50 + Math.cos(ang)*dist) + '%'; dot.style.top = (50 + Math.sin(ang)*dist) + '%';
-                uiElems.radarGrid.appendChild(dot);
-                setTimeout(() => dot.remove(), 2000);
-            }
-        }
-        setInterval(updateRadar, 100);
-
-        function updateEnergy() {
-            const h = 40 + Math.random() * 60;
-            uiElems.energyFill.style.height = h + '%';
-            uiElems.energyFill.style.boxShadow = `0 0 ${h/5}px #00f3ff`;
-        }
-        setInterval(updateEnergy, 500);
-
-        const termLines = ["CONNECTING...", "ENCRYPTING...", "OPTIMIZING KERNEL...", "WARNING: HIGH CPU", "SCANNING HOSTILES...", "PING: 14ms", "SYNC COMPLETE", "LOADING SHADERS...", "BUFFER OVERFLOW", "DOWNLOADING [44MB]", "TRACE ROUTE", "USER AUTH: OK", "RENDER ACTIVE", "AUDIO LISTENING", "ENERGY STABLE", "RADAR PING"];
-        function addLogLine() {
-            const line = termLines[Math.floor(Math.random() * termLines.length)];
-            const div = document.createElement('div'); div.className = "log-line";
-            div.innerHTML = `<span>> ${Math.floor(performance.now())}</span> ${line}`;
-            uiElems.termLog.appendChild(div);
-            if (uiElems.termLog.children.length > 8) uiElems.termLog.removeChild(uiElems.termLog.firstChild);
-        }
-        setInterval(addLogLine, 800);
-
-        function updateGauges() {
-            const cpu = Math.floor(30 + Math.random() * 40); uiElems.cpuNum.innerText = cpu + "%"; uiElems.cpuGauge.style.strokeDashoffset = 100 - cpu;
-            const ram = Math.floor(50 + Math.random() * 30); uiElems.ramNum.innerText = ram + "%"; uiElems.ramGauge.style.strokeDashoffset = 100 - ram;
-            const net = Math.floor(5 + Math.random() * 20); uiElems.netGauge.style.strokeDashoffset = 100 - net;
-        }
-        setInterval(updateGauges, 2000);
+        function updateRadar() { if (Math.random() < 0.05) { const dot = document.createElement('div'); dot.className = 'radar-dot'; const ang = Math.random() * Math.PI * 2; const dist = Math.random() * 45; dot.style.left = (50 + Math.cos(ang)*dist) + '%'; dot.style.top = (50 + Math.sin(ang)*dist) + '%'; uiElems.radarGrid.appendChild(dot); setTimeout(() => dot.remove(), 2000); } } setInterval(updateRadar, 100);
+        function updateEnergy() { const h = 40 + Math.random() * 60; uiElems.energyFill.style.height = h + '%'; uiElems.energyFill.style.boxShadow = `0 0 ${h/5}px #00f3ff`; } setInterval(updateEnergy, 500);
+        const termLines = ["CONNECTING...", "ENCRYPTING...", "OPTIMIZING KERNEL...", "HIGH CPU LOAD", "SCANNING HOSTILES...", "PING: 14ms", "SYNC COMPLETE", "LOADING SHADERS...", "BUFFER OVERFLOW", "TRACE ROUTE", "USER AUTH: OK", "RENDER ACTIVE", "AUDIO DETECTED", "ENERGY STABLE", "RADAR PING"];
+        function addLogLine() { const line = termLines[Math.floor(Math.random() * termLines.length)]; const div = document.createElement('div'); div.className = "log-line"; div.innerHTML = `<span>> ${Math.floor(performance.now())}</span> ${line}`; uiElems.termLog.appendChild(div); if (uiElems.termLog.children.length > 8) uiElems.termLog.removeChild(uiElems.termLog.firstChild); } setInterval(addLogLine, 800);
+        function updateGauges() { const cpu = Math.floor(30 + Math.random() * 40); uiElems.cpuNum.innerText = cpu + "%"; uiElems.cpuGauge.style.strokeDashoffset = 100 - cpu; const ram = Math.floor(50 + Math.random() * 30); uiElems.ramNum.innerText = ram + "%"; uiElems.ramGauge.style.strokeDashoffset = 100 - ram; const net = Math.floor(5 + Math.random() * 20); uiElems.netGauge.style.strokeDashoffset = 100 - net; } setInterval(updateGauges, 2000);
         function updateDate() { const d = new Date(); uiElems.dateVal.innerText = d.toISOString().split('T')[0] + " " + d.toTimeString().split(' ')[0]; } setInterval(updateDate, 1000); updateDate();
 
-        // --- Wallpaper Engine 属性监听 ---
         window.wallpaperPropertyListener = {
             applyUserProperties: function(prop) {
-                // 主颜色
-                if (prop.schemecolor) { 
-                    const c = prop.schemecolor.value.split(' ').map(parseFloat); 
-                    config.color.setRGB(c[0], c[1], c[2]); 
-                    uniforms.uColor.value = config.color; 
-                    const cssCol = `rgb(${c[0]*255},${c[1]*255},${c[2]*255})`; 
-                    document.getElementById('main-hud').style.borderColor = cssCol; 
-                    document.querySelectorAll('.stat-fill').forEach(el=>el.style.backgroundColor=cssCol); 
-                    document.querySelectorAll('.term-title').forEach(el=>el.style.backgroundColor=cssCol); 
-                }
-                // 副颜色
-                if (prop.secondary_color) {
-                    const c = prop.secondary_color.value.split(' ').map(parseFloat);
-                    config.color2.setRGB(c[0], c[1], c[2]);
-                    uniforms.uColor2.value = config.color2;
-                }
-                // 颜色模式
-                if (prop.color_mode) {
-                    config.colorMode = parseInt(prop.color_mode.value);
-                    uniforms.uColorMode.value = config.colorMode;
-                }
-
+                if (prop.schemecolor) { const c = prop.schemecolor.value.split(' ').map(parseFloat); config.color.setRGB(c[0], c[1], c[2]); uniforms.uColor.value = config.color; const cssCol = `rgb(${c[0]*255},${c[1]*255},${c[2]*255})`; document.getElementById('main-hud').style.borderColor = cssCol; document.querySelectorAll('.stat-fill').forEach(el=>el.style.backgroundColor=cssCol); document.querySelectorAll('.term-title').forEach(el=>el.style.backgroundColor=cssCol); }
+                if (prop.secondary_color) { const c = prop.secondary_color.value.split(' ').map(parseFloat); config.secondaryColor.setRGB(c[0], c[1], c[2]); uniforms.uSecColor.value = config.secondaryColor; }
+                if (prop.color_mode) { config.colorMode = parseInt(prop.color_mode.value); uniforms.uColorMode.value = config.colorMode; }
                 if (prop.geometry_mode) { const idx = parseInt(prop.geometry_mode.value); config.mode = idx; document.getElementById('mode-display').innerText = modeNames[idx]; const arr = shapes[idx] || shapes[0]; for(let i=0; i<config.count*3; i++) targetArr[i] = arr[i]; }
                 if (prop.particle_size) uniforms.uSize.value = prop.particle_size.value;
                 if (prop.bloom_strength) bloomPass.strength = prop.bloom_strength.value;
+                if (prop.trail_strength) afterimagePass.uniforms["damp"].value = prop.trail_strength.value;
                 if (prop.rotation_speed) config.rotSpeed = prop.rotation_speed.value;
                 if (prop.audio_sensitivity) config.audioSens = prop.audio_sensitivity.value;
                 if (prop.mouse_parallax) config.mouseParallax = prop.mouse_parallax.value;
                 if (prop.show_hud) document.getElementById('ui-layer').style.opacity = prop.show_hud.value ? 1 : 0;
                 if (prop.use_webcam) { config.useWebcam = prop.use_webcam.value; toggleWebcam(config.useWebcam); }
+                if (prop.enable_swipe) config.swipeEnabled = prop.enable_swipe.value;
+                
+                // 新增手势灵敏度
+                if (prop.gesture_zoom_sens) config.zoomSens = prop.gesture_zoom_sens.value;
+                if (prop.gesture_pinch_sens) config.pinchSens = prop.gesture_pinch_sens.value;
+
                 if (prop.cam_pos_x) document.getElementById('cam-container').style.left = prop.cam_pos_x.value + '%';
                 if (prop.cam_pos_y) document.getElementById('cam-container').style.top = prop.cam_pos_y.value + '%';
                 if (prop.cam_scale) document.getElementById('cam-container').style.transform = `translate(-50%, -50%) scale(${prop.cam_scale.value})`;
-                if (prop.sys_pos_x) uiElems.sysPanel.style.left = prop.sys_pos_x.value + '%';
-                if (prop.sys_pos_y) uiElems.sysPanel.style.top = prop.sys_pos_y.value + '%';
-                if (prop.sys_scale) uiElems.sysPanel.style.transform = `scale(${prop.sys_scale.value})`;
-                if (prop.audio_pos_x) uiElems.audioPanel.style.left = prop.audio_pos_x.value + '%';
-                if (prop.audio_pos_y) uiElems.audioPanel.style.top = prop.audio_pos_y.value + '%';
-                if (prop.audio_scale) uiElems.audioPanel.style.transform = `scale(${prop.audio_scale.value})`;
-                if (prop.term_pos_x) uiElems.termPanel.style.left = prop.term_pos_x.value + '%';
-                if (prop.term_pos_y) uiElems.termPanel.style.top = prop.term_pos_y.value + '%';
-                if (prop.term_scale) uiElems.termPanel.style.transform = `scale(${prop.term_scale.value})`;
-                if (prop.core_pos_x) uiElems.corePanel.style.left = prop.core_pos_x.value + '%';
-                if (prop.core_pos_y) uiElems.corePanel.style.top = prop.core_pos_y.value + '%';
-                if (prop.core_scale) uiElems.corePanel.style.transform = `scale(${prop.core_scale.value})`;
-                if (prop.radar_pos_x) uiElems.radarPanel.style.left = prop.radar_pos_x.value + '%';
-                if (prop.radar_pos_y) uiElems.radarPanel.style.top = prop.radar_pos_y.value + '%';
-                if (prop.radar_scale) uiElems.radarPanel.style.transform = `scale(${prop.radar_scale.value})`;
-                if (prop.energy_pos_x) uiElems.energyPanel.style.left = prop.energy_pos_x.value + '%';
-                if (prop.energy_pos_y) uiElems.energyPanel.style.top = prop.energy_pos_y.value + '%';
-                if (prop.energy_scale) uiElems.energyPanel.style.transform = `scale(${prop.energy_scale.value})`;
+                const panels = ['sys', 'audio', 'term', 'core', 'radar', 'energy'];
+                panels.forEach(p => { if (prop[`${p}_pos_x`]) uiElems[`${p}Panel`].style.left = prop[`${p}_pos_x`].value + '%'; if (prop[`${p}_pos_y`]) uiElems[`${p}Panel`].style.top = prop[`${p}_pos_y`].value + '%'; if (prop[`${p}_scale`]) uiElems[`${p}Panel`].style.transform = `scale(${prop[`${p}_scale`].value})`; });
             }
         };
 
-        // 动画循环
         let sB=0, sM=0, sH=0; let audioArr = new Array(10).fill(0);
         window.wallpaperRegisterAudioListener && window.wallpaperRegisterAudioListener((d) => {
             let b=0,m=0,h=0; for(let i=0;i<5;i++) b+=d[i]+d[i+64]; for(let i=5;i<20;i++) m+=d[i]+d[i+64]; for(let i=20;i<64;i++) h+=d[i]+d[i+64];
@@ -811,13 +632,45 @@ if (pinchDist < PINCH_THRESHOLD) {
         });
 
         let lastTime = 0; let frames = 0;
+        let camTheta = 0; let camPhi = Math.PI / 2;
+        let camRadius = 1600;
+
         function animate(time) {
-            requestAnimationFrame(animate); const t = time * 0.001; uniforms.uTime.value = t;
+            requestAnimationFrame(animate); 
+            const t = time * 0.001; 
+            uniforms.uTime.value = t;
             if (time - lastTime >= 1000) { uiElems.fpsVal.innerText = `${frames} FPS`; uiElems.fpsBar.style.width = Math.min((frames/144)*100, 100) + '%'; frames = 0; lastTime = time; } frames++;
-            const p = geometry.attributes.position.array; for(let i=0; i<config.count*3; i++) p[i] += (targetArr[i] - p[i]) * 0.035; geometry.attributes.position.needsUpdate = true;
-            const rot = t * config.rotSpeed * 0.15; let cx = Math.sin(rot) * 1600; let cz = Math.cos(rot) * 1600;
-            if (!config.useWebcam && config.mouseParallax > 0) { cx += mouse.x * 300 * config.mouseParallax; camera.position.y += (mouse.y * 300 * config.mouseParallax - camera.position.y) * 0.05; } else { camera.position.y += (100 - camera.position.y)*0.05; }
-            camera.position.x = cx; camera.position.z = cz; camera.lookAt(0,0,0); composer.render();
+            
+            const p = geometry.attributes.position.array; 
+            for(let i=0; i<config.count*3; i++) p[i] += (targetArr[i] - p[i]) * 0.035; 
+            geometry.attributes.position.needsUpdate = true;
+            
+            // --- 核心更新：摄像机逻辑 (应用 Pinch Rotate Sensitivity) ---
+            if (config.useWebcam && config.isPinched) {
+                // 手位置 (0-1) -> 偏移量 (-0.5 - 0.5) -> 乘以 灵敏度 -> 映射到角度
+                const targetTheta = (1 - config.handX) * (Math.PI * 2 * config.pinchSens) + Math.PI; 
+                const targetPhi = config.handY * (Math.PI * 0.8 * config.pinchSens) + 0.1;
+
+                camTheta += (targetTheta - camTheta) * 0.1;
+                camPhi += (targetPhi - camPhi) * 0.1;
+
+            } else {
+                const autoRot = t * config.rotSpeed * 0.15;
+                camTheta = autoRot;
+                camPhi += (Math.PI/2 - camPhi) * 0.05; 
+                
+                if (!config.useWebcam && config.mouseParallax > 0) { 
+                    camTheta += mouse.x * config.mouseParallax * 0.5;
+                    camPhi = Math.PI/2 - mouse.y * 0.5 * config.mouseParallax;
+                }
+            }
+
+            camera.position.x = camRadius * Math.sin(camPhi) * Math.cos(camTheta);
+            camera.position.y = camRadius * Math.cos(camPhi);
+            camera.position.z = camRadius * Math.sin(camPhi) * Math.sin(camTheta);
+            camera.lookAt(0,0,0);
+            
+            composer.render();
         }
         window.addEventListener('resize', () => { camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); composer.setSize(window.innerWidth, window.innerHeight); });
         animate(0);
